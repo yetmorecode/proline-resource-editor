@@ -99,4 +99,18 @@ The pixel data highlighted of ```c3 31 c4 33``` will actually be unpacked to ```
 
 ## Tilemaps
 
+```
+ddw unknown
+ddw width
+ddw height
+ddw number of items
+for each item:
+ddw           data_size
+db[data_size] data
+```
+
+```
+
+```
+
 
