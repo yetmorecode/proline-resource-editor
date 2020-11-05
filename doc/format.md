@@ -19,6 +19,8 @@ So far I've seen three different resource types used:
 * Fullscreen (640x480) pixmaps
 * Tilemaps (variable size)
 
+Byte order for words and dwords is little-endian.
+
 ## VGA color palettes
 
 Color palettes are described by their size folled by simply 256 rgb colors as fed into the VGA DAC (256 * 3 bytes).
