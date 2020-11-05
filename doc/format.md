@@ -121,6 +121,6 @@ The image data for those items can actually "skip" pixels in the framebufer. Thi
 
 Despite from the wrong palette, the black area in the corner will actually not be drawn on the screen but skipped directly on the framebuffer. If a color byte of ```0``` is encountered in the item's pixel data, the next byte will be read as ```count``` and ```count``` pixels will be skipped in the framebuffer when drawing the image.
 
-Some more examples of this technique used (and another wrong palette xD):
+Some more examples of this technique used (with more wrong palettes ;)). The black areas will actually not be drawn on the screen:
 
 ![Alt text](tileset_skip2.png?raw=true "Tileset Loading Code")
