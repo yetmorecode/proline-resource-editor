@@ -10,8 +10,8 @@ The resource files start with the signature "PROLINE Resource File  (c) 1997 by 
 
 ## General Structure
 
-The different resources with a single file a referenced directly by the executable, leaving the file itself without any
-map of itself. It is impossible to reconstruct the resource files without reverse engineering the offsets of different resources within the executable.
+The different resources within a single file a referenced directly by the executable, leaving the file itself without any
+map of itself. It is impossible to reconstruct the resource files without reverse engineering the offsets of different resources from the game executable. However, it's not too hard to make sense of them.
 
 So far I've seen three different resource types used:
 
