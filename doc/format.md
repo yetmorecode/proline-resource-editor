@@ -15,9 +15,9 @@ map of itself. It is impossible to reconstruct the resource files without revers
 
 So far I've seen three different resource types used:
 
-* [VGA color palettes](#VGA_color_palettes)
-* Fullscreen (640x480) pixmaps
-* Tilemaps (variable size)
+* [VGA color palettes](#vga-color-palettes)
+* [Fullscreen (640x480) pixmaps](#fullscreen-pixmaps)
+* [Tilemaps (variable size)](#tilemaps)
 
 Byte order is little-endian, e.g. a dword of value 0x12345678 would be found as byte sequence "78 56 34 12" in the file, a word value 0x1234 as "34 12", etc.
 
