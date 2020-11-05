@@ -19,7 +19,7 @@ So far I've seen three different resource types used:
 * Fullscreen (640x480) pixmaps
 * Tilemaps (variable size)
 
-Byte order is little-endian, e.g. a dword of value 0x12345678 would be found as byte sequence "78 56 34 12" in the file.
+Byte order is little-endian, e.g. a dword of value 0x12345678 would be found as byte sequence "78 56 34 12" in the file, a word value 0x1234 as "34 12", etc.
 
 ## VGA color palettes
 
