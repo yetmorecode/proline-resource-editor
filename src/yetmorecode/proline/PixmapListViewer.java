@@ -52,17 +52,23 @@ public class PixmapListViewer extends JPanel {
         	}	
     	}
     
-		setPreferredSize(new Dimension(width * PIXEL_SIZE, (height+1) * PIXEL_SIZE * itemCount));
+		setPreferredSize(new Dimension(Math.max(640, 10 + width * PIXEL_SIZE), (height+1) * PIXEL_SIZE * itemCount));
 	}
 	
 	public void paintComponent(Graphics graphics) {
 	    super.paintComponent(graphics);
 	    Graphics2D g2d = (Graphics2D) graphics;
 
+	    var spacing = 0;
 		for (int i=0; i < height*itemCount; i++) {
+			
+			if (i % height == 0) {
+				spacing += 10;
+			}
+			
 	    	for (int j = 0; j < width; j++) {
 	    		g2d.setColor(pixels.get(i*(width)+j));
-	    		g2d.fillRect(j*PIXEL_SIZE, i*PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);	
+	    		g2d.fillRect(10 + j*PIXEL_SIZE, i*PIXEL_SIZE+spacing, PIXEL_SIZE, PIXEL_SIZE);	
 	    	}
 	    } 
 	}
