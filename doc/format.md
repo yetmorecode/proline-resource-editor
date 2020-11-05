@@ -88,6 +88,7 @@ The pixel data highlighted of ```c3 31 c4 33``` will actually be unpacked to ```
 
 ![Alt text](fullscreen_code.png?raw=true "Fullscreen Image Loading Code")
 
+- ```resource_buffer``` from what I can see is most of the time just the linear framebuffer itself
 - Lines 56-57 open the file and seek to the resource offset
 - Lines 58 reads the size of the complete resource (header + image data)
 - Lines 59-63 allocate memory for the resource and read it
