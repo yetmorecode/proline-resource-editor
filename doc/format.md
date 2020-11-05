@@ -24,7 +24,7 @@ So far I've seen three different resource types used:
 Color palettes are described by their size folled by simply 256 rgb colors as fed into the VGA DAC (256 * 3 bytes).
 
 ```
-ddw SIZE
+ddw size
 db COLOR0_R
 db COLOR0_G
 db COLOR0_B
@@ -37,18 +37,18 @@ db COLOR2_B
 ...
 ```
 
-So far I've only seen full color palettes of size 0x300 (256 * 3). Some of those colors are dynamically overwritten when the palette is loaded, for example color 0  is usually cleared out to black or team specific colors are loaded into some part of the palette.
+So far I've only seen full color palettes of ```size == 0x300``` (256 * 3). Some of those colors are dynamically overwritten when the palette is loaded, for example color 0  is usually cleared out to black or team specific colors are loaded into some part of the palette.
 
-For example the color palette for the main menu background is found at 0x1014d36 (0x300 bytes in size):
+The color palette for the main menu background is found at 0x1014d36 (0x300 bytes in size) and shown below:
 
 ![Alt text](palette.png?raw=true "Palette")
 
-Following is an decompiled and mostly annotated excerpt from the code used for loading palettes from resource files:
+Below is an decompiled and mostly annotated excerpt from the code used for loading palettes from resource files:
 
 ![Alt text](palette_code.png?raw=true "Palette Loading Code")
 
-- At line 17 ```SIZE``` is read.
-- At line 18 The palette itself of given size is read
+- At line 17 ```size``` is read.
+- At line 18 The palette itself of given ```size``` is read
 - Below that point you can see how certain colors are overwritten (lines 23-25 or 34 to 36), or how a whole block of colors is overwritten (lines 28-31).
 
 The full code is quite more complex and seems to handle a lot of dynamic edge cases I've not been able to fully understand yet.
