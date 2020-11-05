@@ -15,7 +15,7 @@ map of itself. It is impossible to reconstruct the resource files without revers
 
 So far I've seen three different resource types used:
 
-* VGA color palettes
+* [VGA color palettes](#VGA_color_palettes)
 * Fullscreen (640x480) pixmaps
 * Tilemaps (variable size)
 
