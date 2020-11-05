@@ -47,9 +47,9 @@ Following is an decompiled and mostly annotated excerpt from the code used for l
 
 ![Alt text](palette_code.png?raw=true "Palette Loading Code")
 
-At line 17 ```SIZE``` is read.
-At line 18 The palette itself of given size is read
-Below that point you can see how certain colors are overwritten (lines 23-25 or 34 to 36), or how a whole block of colors is overwritten (lines 28-31).
+- At line 17 ```SIZE``` is read.
+- At line 18 The palette itself of given size is read
+- Below that point you can see how certain colors are overwritten (lines 23-25 or 34 to 36), or how a whole block of colors is overwritten (lines 28-31).
 
 The full code is quite more complex and seems to handle a lot of dynamic edge cases I've not been able to fully understand yet.
 
@@ -86,14 +86,14 @@ The pixel data highlighted of ```c3 31 c4 33``` will actually be unpacked to ```
 
 ![Alt text](fullscreen_code.png?raw=true "Fullscreen Image Loading Code")
 
-Lines 56-57 open the file and seek to the resource offset
-Lines 58 reads the size of the complete resource (header + image data)
-Lines 59-63 allocate memory for the resource and read it
-Line 66 sets up the first 128 bytes (0x80) as a header structure
-Line 67 advances ```resource_buffer_offset``` to the actual pixel data
-Lines 69 and following loop through the pixel data
-Lines 73 - 79 unpack a byte if the 6th bit is set
-Lines 80-85 write a simple color value (without unpkacing)
+- Lines 56-57 open the file and seek to the resource offset
+- Lines 58 reads the size of the complete resource (header + image data)
+- Lines 59-63 allocate memory for the resource and read it
+- Line 66 sets up the first 128 bytes (0x80) as a header structure
+- Line 67 advances ```resource_buffer_offset``` to the actual pixel data
+- Lines 69 and following loop through the pixel data
+- Lines 73 - 79 unpack a byte if the 6th bit is set
+- Lines 80-85 write a simple color value (without unpkacing)
 
 ## Tilemaps
 
