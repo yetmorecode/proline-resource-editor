@@ -49,7 +49,7 @@ public class ImageViewer extends JPanel {
     		}
     	}
 	
-		setPreferredSize(new Dimension((height-1) * PIXEL_SIZE, width * PIXEL_SIZE));
+		setPreferredSize(new Dimension(width * PIXEL_SIZE, height * PIXEL_SIZE));
 		System.out.println(String.format("pixels: %x, %x", pixels.size(), width * height));
 	}
 	

@@ -20,6 +20,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -34,6 +35,7 @@ public class Reader extends JFrame implements TreeSelectionListener {
 	private JScrollPane contentScroll;
 	private JLabel content;
 	private JSplitPane splitPane;
+	private JSplitPane propertiesSplit;
 	
 	JMenuBar menubar;
 	JMenu menu, submenu;
@@ -67,7 +69,7 @@ public class Reader extends JFrame implements TreeSelectionListener {
 	
 	public Reader() {
 		setTitle("Proline Resource Editor 1.0");
-        setSize(1500,900);
+        setSize(1300,700);
 	    addWindowListener(new WindowAdapter() {
 	    	public void windowClosing(WindowEvent windowEvent){
 	            System.exit(0);
@@ -86,12 +88,19 @@ public class Reader extends JFrame implements TreeSelectionListener {
 	    
 	    content = new JLabel("");
 	    contentScroll = new JScrollPane(content);
+	    contentScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+	    
+	    var propertieScroll = new JScrollPane();
+	    propertiesSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+	    propertiesSplit.setLeftComponent(contentScroll);
+	    propertiesSplit.setRightComponent(propertieScroll);
+	    propertiesSplit.setDividerLocation(650);
 	    
 	    splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 	    splitPane.setLeftComponent(treeScroll);
-	    splitPane.setRightComponent(contentScroll);
+	    splitPane.setRightComponent(propertiesSplit);
 	    splitPane.setDividerLocation(250);
-
+	    
 	    //Provide minimum sizes for the two components in the split pane
 	    Dimension minimumSize = new Dimension(100, 50);
 	    treeScroll.setMinimumSize(minimumSize);
@@ -219,7 +228,7 @@ public class Reader extends JFrame implements TreeSelectionListener {
 					var v = new PaletteViewer(file, r.getOffset());
 					contentScroll = new JScrollPane(v, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
 					        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-					splitPane.setRightComponent(contentScroll);
+					propertiesSplit.setLeftComponent(contentScroll);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -229,9 +238,10 @@ public class Reader extends JFrame implements TreeSelectionListener {
 				try {
 					var p = new PaletteViewer(file, r.getPaletteOffset());
 					var v = new ImageViewer(file, r.getOffset(), p.colors);
-					contentScroll = new JScrollPane(v, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
+					
+					contentScroll = new JScrollPane(v, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, 
 					        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-					splitPane.setRightComponent(contentScroll);
+					propertiesSplit.setLeftComponent(contentScroll);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -240,9 +250,9 @@ public class Reader extends JFrame implements TreeSelectionListener {
 				try {
 					var p = new PaletteViewer(file, r.getPaletteOffset());
 					var v = new PixmapListViewer(file, r.getOffset(), p.colors);
-					contentScroll = new JScrollPane(v, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
+					contentScroll = new JScrollPane(v, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, 
 					        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-					splitPane.setRightComponent(contentScroll);
+					propertiesSplit.setLeftComponent(contentScroll);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
