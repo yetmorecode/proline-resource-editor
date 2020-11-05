@@ -88,7 +88,6 @@ The pixel data highlighted of ```c3 31 c4 33``` will actually be unpacked to ```
 
 ![Alt text](fullscreen_code.png?raw=true "Fullscreen Image Loading Code")
 
-- ```resource_buffer``` from what I can see is most of the time just the linear framebuffer itself
 - Lines 56-57 open the file and seek to the resource offset
 - Lines 58 reads the size of the complete resource (header + image data)
 - Lines 59-63 allocate memory for the resource and read it
@@ -100,14 +99,18 @@ The pixel data highlighted of ```c3 31 c4 33``` will actually be unpacked to ```
 
 ## Tilemaps
 
+The game can also load sets of same-sized pixmaps as one logical resource (e.g. a list of flags, different states of buttons, an graphical alphabet, etc.). Those tilemaps are found with a 16 byte header, containing an unknown dword, the width, height and number of items each as dword. Follwing a the actual list of items. Each item consisting of an dword describing its data size followed by the actual data.
+
 ```
-ddw unknown
-ddw width
-ddw height
-ddw number of items
-for each item:
-ddw           data_size
-db[data_size] data
+ddw                 unknown
+ddw                 width
+ddw                 height
+ddw                 number of items
+ddw                 item1_data_size
+db[item1_data_size] item1_data
+ddw                 item2_data_size
+db[item2_data_size] item2_data
+...
 ```
 
 ```
