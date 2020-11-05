@@ -115,11 +115,11 @@ db[item2_data_size] item2_data
 
 ![Alt text](tileset_code.png?raw=true "Tileset Loading Code")
 
-The image data for those items can actually "skip" pixels in the framebufer. This is used for creating various shapes. Since those pixmaps are directly written to the framebuffer, this mainly replicates transparent areas.
+Despite the above code just copying the pixel data directly from the resource file as it is, it is not suitable for directly writing it to the screen (i.e. the framebuffer). The data for can "skip" pixels in the framebufer. This is used for creating various shapes and transparency. 
 
 ![Alt text](tileset_skip.png?raw=true "Tileset Loading Code")
 
-Despite from the wrong palette, the black area in the corner will actually not be drawn on the screen but skipped directly on the framebuffer. If a color byte of ```0``` is encountered in the item's pixel data, the next byte will be read as ```count``` and ```count``` pixels will be skipped in the framebuffer when drawing the image.
+The black area in the corner will actually not be drawn on the screen but skipped directly on the framebuffer. If a color byte of ```0``` is encountered in the item's pixel data, the next byte will be read as ```count``` and ```count``` pixels will be skipped in the framebuffer when drawing the image.
 
 Some more examples of this technique used (with more wrong palettes ;)). The black areas will actually not be drawn on the screen:
 
