@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 
 public class PixmapListViewer extends JPanel {
 	private static final long serialVersionUID = 4470777298821205654L;
-	private static final int PIXEL_SIZE = 1;
+	private static final int PIXEL_SIZE = 10;
 	private int width;
 	private int height;
 	private ArrayList<Color> pixels = new ArrayList<>();
