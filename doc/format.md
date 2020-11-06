@@ -70,7 +70,7 @@ They are structured as a simple header followed by the actual image data. The im
 ```
 ddw      SIZE
 db[128]  HEADER
-db[SIZE] PIXEL_COLORS
+db[SIZE-128] PIXEL_COLORS
 ```
 
 ```SIZE``` describes the actual size of header + image data in the resource file. 
