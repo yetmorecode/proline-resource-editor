@@ -1,17 +1,17 @@
 # PROLINE Resource File Format
 
-This specification refers to resource files as used by the game F1 manager professional. The file extension is *.rsc.
+This specification refers to resource archives as used by the game F1 manager professional. The file extension is *.rsc.
 
 ## Signature
 
-The resource files start with the signature "PROLINE Resource File  (c) 1997 by PROLINE Software GmbH"
+The resource archives start with the signature "PROLINE Resource File  (c) 1997 by PROLINE Software GmbH"
 
 ![Alt text](signature.png?raw=true "Signature")
 
 ## General Structure
 
-The different resources within a single file a referenced directly by the executable, leaving the file itself without any
-map of itself. It is impossible to reconstruct the resource files without reverse engineering the offsets of different resources from the game executable. However, it's not too hard to make sense of them.
+The different resources within a single archive are referenced directly by the executable, leaving the file itself without any
+map of itself. It is impossible to reconstruct the resource without reverse engineering their offsets from the game executable itself. However, it's not too hard to make sense of them.
 
 So far I've seen three different resource types used:
 
@@ -23,7 +23,7 @@ Byte order is little-endian, e.g. a dword of value 0x12345678 would be found as 
 
 ## VGA color palettes
 
-Color palettes are described by their size folled by simply 256 rgb colors as fed into the VGA DAC (256 * 3 bytes).
+Color palettes are described by their size followed by the 256 rgb colors as supposed to be fed into the VGA DAC (256 * 3 bytes).
 
 ```
 ddw size
@@ -45,7 +45,7 @@ The color palette for the main menu background is found at 0x1014d36 (0x300 byte
 
 ![Alt text](palette.png?raw=true "Palette")
 
-Below is an decompiled and mostly annotated excerpt from the code used for loading palettes from resource files:
+Below is an decompiled and annotated excerpt from the code used for loading palettes from resource files:
 
 ![Alt text](palette_code.png?raw=true "Palette Loading Code")
 
@@ -53,11 +53,13 @@ Below is an decompiled and mostly annotated excerpt from the code used for loadi
 - At line 18 The palette itself of given ```size``` is read
 - Below that point you can see how certain colors are overwritten (lines 23-25 or 34 to 36), or how a whole block of colors is overwritten (lines 28-31).
 
-The full code is quite more complex and seems to handle a lot of dynamic edge cases I've not been able to fully understand yet.
+The full function is quite more complex and seems to handle a lot of dynamic edge cases I've not been able to fully understand yet.
 
 ## Fullscreen pixmaps
 
-Fullyscreen pixmaps are stored in a packed format (combining repeated pixles into a two byte sequence of color and repetitions) described by a simple header followed by the actual image data. The image data is simply a list of pixels directly written into the framebuffer and referencing index colors from the VGA palette (meaning each pixel is described as a 0-255 1-byte color number, while the 3 bytes for R, G and B values are described somewhere else in the palette).
+Fullyscreen pixmaps are stored in a packed format (combining repeated pixles into a two byte sequence of color and repetitions) .
+
+They are structured as a simple header followed by the actual image data. The image data is simply a list of pixels directly written into the framebuffer and referencing index colors from the VGA palette (i.e. each pixel is represented by its 0-255 1-byte color number, while the 3 bytes for R, G and B values of that color are described in the palette).
 
 ```
 ddw      SIZE
@@ -78,9 +80,9 @@ db[SIZE] PIXEL_COLORS
 ```
 
 Since repeated pixles are packed, the size of the image data can be considerably smaller than
-the actual amount of screen to fill (640x480 pixels). The 6th bit in the color number is actually used to indicate repetions for pixels. When the bit is set (```color & 0xc0 == 0xc0```), the byte (masked by ```0x3f```) describes a number of repetitions and the next byte describes the pixels' color. If the bit is not set, the byte simply describes the pixels color.
+the actual amount of screen to fill (640x480 pixels). The 7th & 8th bits in the color number are used to indicate repetitions for pixels. When the bits are set (```color & 0xc0 == 0xc0```), the remaining bits (masked by ```0x3f```) describes a number of repetitions and the next byte in the pixel data describes those pixels' actual color. If the bits are not set, the byte simply describes a single pixels color.
 
-This can be seen for example in the main background (offset 0xa76d4d, palette 0x1014d36):
+This can be seen for example in the mainmenu background image (offset 0xa76d4d, palette 0x1014d36):
 
 ![Alt text](fullscreen_packing.png?raw=true "Fullscreen Packing")
 
@@ -99,7 +101,7 @@ The pixel data highlighted of ```c3 31 c4 33``` will actually be unpacked to ```
 
 ## Tilemaps
 
-The game can also load sets of same-sized pixmaps as one logical resource (e.g. a list of flags, different states of buttons, an graphical alphabet, etc.). Those tilemaps are found with a 16 byte header, containing an unknown dword, the width, height and number of items each as dword. Follwing a the actual list of items. Each item consisting of an dword describing its data size followed by the actual data.
+The game can also load sets of same-sized pixmaps as one logical resource (e.g. a list of flags, different states of buttons, an graphical alphabet, etc.). Those tilemaps are found with a 16 byte header, containing an unknown dword, the width and height for all images forund and the number of images in the map (each as dword). Followed by the actual list of items, each consisting of an dword describing its data size followed by the actual data.
 
 ```
 ddw                 unknown
@@ -115,12 +117,16 @@ db[item2_data_size] item2_data
 
 ![Alt text](tileset_code.png?raw=true "Tileset Loading Code")
 
-Despite the above code just copying the pixel data directly from the resource file as it is, it is not suitable for directly writing it to the screen (i.e. the framebuffer). The data for can "skip" pixels in the framebufer. This is used for creating various shapes and transparency. 
+Despite the above code just copying the pixel data directly from the resource file as it is, it is not suitable for directly writing it to the screen (i.e. the framebuffer). The encoded image data can "skip" pixels in the framebufer by using the below described encoding scheme. This is used for creating various shapes and transparent areas. 
 
 ![Alt text](tileset_skip.png?raw=true "Tileset Loading Code")
 
-The black area in the corner will actually not be drawn on the screen but skipped directly on the framebuffer. If a color byte of ```0``` is encountered in the item's pixel data, the next byte will be read as ```count``` and ```count``` pixels will be skipped in the framebuffer when drawing the image.
+The black area in the lower left corner of the poster asset will actually not be drawn on the screen, but skipped when drawn on the framebuffer. If a color byte of ```0``` is encountered in the item's pixel data, the next byte will be read as ```skip_count``` and ```skip_count``` pixels will be skipped in the framebuffer when drawing the image.
 
 Some more examples of this technique used (with more wrong palettes ;)). The black areas will actually not be drawn on the screen:
 
 ![Alt text](tileset_skip2.png?raw=true "Tileset Loading Code")
+
+## Other assets
+
+There will sure be more assets to be found, espcially those fancy 3D models for the tracks. Just not there yet.
