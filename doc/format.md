@@ -57,6 +57,8 @@ The full function is quite more complex and seems to handle a lot of dynamic edg
 
 ## Fullscreen pixmaps
 
+![Alt text](backgrounds.png?raw=true "Tileset Loading Code")
+
 Fullyscreen pixmaps are stored in a packed format (combining repeated pixles into a two byte sequence of color and repetitions) .
 
 They are structured as a simple header followed by the actual image data. The image data is simply a list of pixels directly written into the framebuffer and referencing index colors from the VGA palette (i.e. each pixel is represented by its 0-255 1-byte color number, while the 3 bytes for R, G and B values of that color are described in the palette).
