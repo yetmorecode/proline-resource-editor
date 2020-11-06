@@ -23,6 +23,8 @@ Byte order is little-endian, e.g. a dword of value 0x12345678 would be found as 
 
 ## VGA color palettes
 
+![Alt text](palette_example.png?raw=true "Signature")
+
 Color palettes are described by their size followed by the 256 rgb colors as supposed to be fed into the VGA DAC (256 * 3 bytes).
 
 ```
