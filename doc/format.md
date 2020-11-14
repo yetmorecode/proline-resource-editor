@@ -16,8 +16,8 @@ map of itself. It is impossible to reconstruct the resource without reverse engi
 So far I've seen three different resource types used:
 
 * [VGA color palettes](#vga-color-palettes)
-* [Fullscreen (640x480) pixmaps](#fullscreen-pixmaps)
-* [Tilemaps (variable size)](#tilemaps)
+* [PCX encoded images](#pcx-images)
+* [Transparent sprites (variable size)](#sprites)
 
 Byte order is little-endian, e.g. a dword of value 0x12345678 would be found as byte sequence "78 56 34 12" in the file, a word value 0x1234 as "34 12", etc.
 
@@ -59,38 +59,21 @@ Below is an decompiled and annotated excerpt from the code used for loading pale
 
 The full function is quite more complex and seems to handle a lot of dynamic edge cases I've not been able to fully understand yet.
 
-## Fullscreen pixmaps
+## PCX encoded images
 
 Note: Turns out this is just [PCX file format](http://www.shikadi.net/moddingwiki/PCX_Format).
 
 ![Alt text](backgrounds.png?raw=true "Tileset Loading Code")
 
-Fullyscreen pixmaps are stored in a packed format (combining repeated pixles into a two byte sequence of color and repetitions) .
-
-They are structured as a simple header followed by the actual image data. The image data is simply a list of pixels directly written into the framebuffer and referencing index colors from the VGA palette (i.e. each pixel is represented by its 0-255 1-byte color number, while the 3 bytes for R, G and B values of that color are described in the palette).
-
 ```
 ddw      SIZE
-db[128]  HEADER
-db[SIZE-128] PIXEL_COLORS
+db[128]  PCX HEADER
+db[SIZE-128] PCX IMAGE DATA
 ```
 
 ```SIZE``` describes the actual size of header + image data in the resource file. 
 
-```HEADER``` is a 128 byte structure, containing the width and height of the image, but otherwise unused in the actual game as far as I can see.
-
-```
-0  ddw	dword		
-4  ddw	dword		
-8  dw	word	width	
-10 dw	word	height	
-12 db[116]	byte[116]	unused
-```
-
-Since repeated pixles are packed, the size of the image data can be considerably smaller than
-the actual amount of screen to fill (640x480 pixels). The 7th & 8th bits in the color number are used to indicate repetitions for pixels. When the bits are set (```color & 0xc0 == 0xc0```), the remaining bits (masked by ```0x3f```) describes a number of repetitions and the next byte in the pixel data describes those pixels' actual color. If the bits are not set, the byte simply describes a single pixels color.
-
-This can be seen for example in the mainmenu background image (offset 0xa76d4d, palette 0x1014d36):
+The data is RLE encoded. This can be seen for example in the mainmenu background image (offset 0xa76d4d, palette 0x1014d36):
 
 ![Alt text](fullscreen_packing.png?raw=true "Fullscreen Packing")
 
@@ -107,9 +90,9 @@ The pixel data highlighted of ```c3 31 c4 33``` will actually be unpacked to ```
 - Lines 73 - 79 unpack a byte if the 6th bit is set
 - Lines 80-85 write a simple color value (without unpkacing)
 
-## Tilemaps
+## Sprites
 
-The game can also load sets of same-sized pixmaps as one logical resource (e.g. a list of flags, different states of buttons, an graphical alphabet, etc.). Those tilemaps are found with a 16 byte header, containing an unknown dword, the width and height for all images forund and the number of images in the map (each as dword). Followed by the actual list of items, each consisting of an dword describing its data size followed by the actual data.
+The game can also load sets of same-sized transparent sprites as one logical resource (e.g. a list of flags, different states of buttons, an graphical alphabet, etc.). Those sprites are found with a 16 byte header, containing an unknown dword, the width and height for all images forund and the number of images in the map (each as dword). Followed by the actual list of items, each consisting of an dword describing its data size followed by the actual data.
 
 ```
 ddw                 unknown
