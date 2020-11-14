@@ -61,6 +61,8 @@ The full function is quite more complex and seems to handle a lot of dynamic edg
 
 ## Fullscreen pixmaps
 
+Note: Turns out this is just [PCX file format](http://www.shikadi.net/moddingwiki/PCX_Format).
+
 ![Alt text](backgrounds.png?raw=true "Tileset Loading Code")
 
 Fullyscreen pixmaps are stored in a packed format (combining repeated pixles into a two byte sequence of color and repetitions) .
