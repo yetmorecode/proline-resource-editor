@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -201,7 +202,47 @@ public class Reader extends JFrame implements TreeSelectionListener {
 	    //editor.add(new DefaultMutableTreeNode(new Resource(0x40, "alphabet", Resource.Type.TYPE_PIXMAPLIST, 0x2126203)));
 	    
 	    
-	    
+	    var pcx = new DefaultMutableTreeNode("Auto-detected PCX");
+	    top.add(pcx);
+	    FileInputStream input;
+	    long pos = 0;
+		try {
+			input = new FileInputStream(file);
+			
+			input.getChannel().position(0);
+			while (input.available() > 4) {
+				input.getChannel().position(pos);
+				
+				int b = input.read();
+				if (b == 0xa) {
+					b = input.read();
+					if (b == 5) {
+						b = input.read();
+						if (b == 1) {
+							b = input.read();
+							if (b == 8) {
+								System.out.println(String.format("found 0a 05 01 08 at %x", pos));
+								if (pos >= 4) {
+									pcx.add(new DefaultMutableTreeNode(new Resource(pos-4, "", Resource.Type.TYPE_PIXMAP, 0x2126203)));	
+									model.reload();
+								}
+							}
+						}
+					}
+				}
+				
+				
+				pos++;
+			}
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		   
 	    tree.expandPath(new TreePath(editor.getPath()));
 	    tree.expandPath(new TreePath(merch.getPath()));
 	    tree.expandPath(new TreePath(palettesCategory.getPath()));
